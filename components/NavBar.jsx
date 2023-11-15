@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+//네비게이션 란에 쓰여진 코드
 export default function NavBar(){
     return(
         <nav>
