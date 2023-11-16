@@ -84,3 +84,101 @@ const router = useRouter();
 const { slug } = router.query;
 // 여기서 slug는 지정해준 파일이름이 된다
 ```
+
+## 11/16/2023
+Nextjs에 쓰이는 메타데이터에 관한 학습이다. 아래는 metadata에 쓰이는 기본 코드다. 코드는 2023년 11월 16일 기준이다.
+
+```js
+export const metadata = {
+  generator: 'Next.js',
+  applicationName: 'Next.js',
+  referrer: 'origin-when-cross-origin',
+  keywords: ['Next.js', 'React', 'JavaScript'],
+  authors: [{ name: 'Seb' }, { name: 'Josh', url: 'https://nextjs.org' }],
+  creator: 'Jiachi Liu',
+  publisher: 'Sebastian Markbåge',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+}
+```
+
+### 제목 바꾸기
+제목을 바꾸는 방법은 리뷰 페이지에 [slug]로 들어가서 안에 있는 page.jsx의 코드에 아래의 코들르 추가했다.
+
+```js
+export async function generateMetadata({ params: { slug } }){
+    const review = await getReview(slug);
+    return {
+        title: review.title,
+    }
+}
+```
+위와 같은 코드를 통해서 일일이 코드에 손을 대지 않아도 자동으로 바뀔 수 있게 한다.
+
+### 아이콘 변경하기
+
+Nextjs에서는 아이콘을 변경하는 방법으로는 아이콘으로 쓸 파일을 가져오는 방법이 있지만, Nextjs 공식 문건에 따르면 
+
+/app 루트에 쓰일 이미지에 favicon, icon, appe-icon이 있다. 혹은 자바스크립트나 타입스크립트를 통해서 아이콘을 만들어서 쓰는 방법도 있다.
+
+#### 자바스크립트/타입스크립트를 통한 아이콘 만들기
+
+```js
+import { ImageResponse } from 'next/og'
+ 
+// Route segment config
+export const runtime = 'edge'
+ 
+// Image metadata
+export const size = {
+  width: 32,
+  height: 32,
+}
+export const contentType = 'image/png'
+ 
+// Image generation
+export default function Icon() {
+  return new ImageResponse(
+    (
+      // ImageResponse JSX element
+      <div
+        style={{
+          fontSize: 24,
+          background: 'black',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+        }}
+      >
+        A
+      </div>
+    ),
+    // ImageResponse options
+    {
+      // For convenience, we can re-use the exported icons size metadata
+      // config to also set the ImageResponse's width and height.
+      ...size,
+    }
+  )
+}
+```
+
+그리고 props를 통해서 params를 통해서 생성하는 방법이 있는데  아래는 그 코드다.
+
+```js
+export default function Icon({ params }) {
+  // ...
+}
+```
+
+```ts
+export default function Icon({ params }: { params: { slug: string } }) {
+  // ...
+}
+```
