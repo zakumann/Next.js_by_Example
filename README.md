@@ -182,3 +182,74 @@ export default function Icon({ params }: { params: { slug: string } }) {
   // ...
 }
 ```
+
+## 11/17/2023
+
+Client Component에 관한걸 공부하기 위해 사용되었고 components 폴더에 ShareLinkButton.jsx를 추가했다.
+
+```js
+export default function ShareLinkButton(){
+    const handleClick = () => {
+        console.log('clicked!');
+    };
+
+    return(
+        <button onClick={handleClick}
+            className="border px-2 py-1 rounded text-slate-500 text-sm
+            hover:bg-orange-100 hover:text-slate-700">
+            Share a Link
+        </button>
+    );
+}
+```
+위의 코드를 작성한 다음에 reviews/[slug]/page.jsx를 통해서 링크를 추가했다.
+
+```js
+            <div className="flex gap-3 items-baseline">
+            <p className="italic pb-2">{review.date}</p>
+            <ShareLinkButton />
+            </div>
+```
+
+위의 링크를 통해서 컴포넌트를 추가했는데, 이렇게 추가된 코드에 에러 메세지로 이벤트 핸들러는 클라이언트 컴퍼넌트 프롭을 통과할 수 없다는 매세지가 출력되었다. 그래서, 맨 윗칸에다 코드를 추가했다.
+
+```js
+'use client'
+```
+
+그러자, 화면이 출력되었다. 이는 Nextjs에서는 모든 컴퍼넌트가 기본적으로 서버 컴포넌트로 이뤄져 있기 때문이다.
+
+onClick={handleClick} 은 주로 리액트에 많이 사용되며 이를 __이벤트 핸들러__ 라고 한다. 이벤트 핸들러는 호출하는 것이 아니라 전달되어야 하는 역할을 하기 때문이다.
+
+### 링크 복사하기
+
+링크를 복사하기 위해서 아래의 코드를 작성했다.
+
+```js
+    const handleClick = () => {
+        navigator.clipboard.writeText(window.location.href);
+        setClicked(true);
+        setTimeout(() => setClicked(false), 1500);
+    };
+```
+
+navigator.clipboar.writeText() 메서드를 작성한 다음에 window.location.href 를 통해서 현재 링크 페이지를 복사하는 메서드를 추가했다.
+
+heroicon에 들어가서 원하는 아이콘을 선택하는데 여기서는 링크 주소를 복사하는 데 쓰이는 클립 아이콘을 집어넣기 위해서 다음과 같은 코드를 작성했다.
+
+```
+npm install @heroicons/react
+```
+그 다음에 아래의 코드를 작성했다.
+```
+import ShareButtons from "@/components/ShareButtons";
+(중략)
+<button onClick={handleClick}
+            className="border flex gap-1 items-center px-2 py-1 rounded
+            text-slate-500 text-sm
+            hover:bg-orange-100 hover:text-slate-700">
+                <LinkIcon className="h-4 w-4"/>
+            {clicked ? 'Link copied!' : 'Share a Link'}
+        </button>
+```
+이와 같이 작성함으로써 링크 버튼에 아이콘을 넣을 수 있게 되었다.
