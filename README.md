@@ -253,3 +253,22 @@ import ShareButtons from "@/components/ShareButtons";
         </button>
 ```
 이와 같이 작성함으로써 링크 버튼에 아이콘을 넣을 수 있게 되었다.
+
+### 11/18/2023
+
+Deployment(배포)
+
+static export
+
+- Any web server(어느 웹 서버에나 가능)
+- Any static web hosting platform(어느 정적 웹 호스팅 플랫폼)
+
+Vercel이란 곳이 있는데 이곳은 깃허브와 연동이 가능해서 깃허브에 있는 Nextjs를 연동시킬 수가 있다.
+
+덧붙여서, 서버와 관련된 명령문으로 터미널에 아래와 같이 작성한다.
+
+```
+npx serve@latest out
+```
+
+위의 코드는 서버의 상태를 점검하는 데 적합한 코드다.
