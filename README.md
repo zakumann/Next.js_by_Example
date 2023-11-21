@@ -280,3 +280,32 @@ npx serve@latest out
 Headless란 직역하면 머리가 없다는 뜻이다. 웹사이트를 만들때는 반드시 컨텐츠(데이터)가 필요하다. 머리는 컨텐츠를 보여줄 수단(웹사이트, ios, 안드로이드 등..)을 의미하고 몸통은 컨텐츠를 의미한다. 즉, 머리(표현 수단)를 언제든 바꿔 끼울 수 있다는 뜻이다.
 
 컨텐츠와 view를 분리하는것이 Headless CMS의 핵심이다. Headless CMS는 Restful API로 컨텐츠에 접근 및 수정하여 사용한다.
+
+## 11/21/2023
+CSM와 Nextjs를 연동시키는 방법으로 csm을 작동시키고 nextjs를 작동시키는 것이다. 아래는 strapi를 설치하는 명령문이다.
+
+```
+npx create-strapi-app@latest my-project
+```
+
+그렇게 설치가 완료된 csm를 통해서 localhost:1337을 통해서 데이터로 접속한다. 만약, 여기에 계정이 없다면 계정을 만들어서 들어가면 된다.
+계정을 만든 다음에 콘텐츠를 작성한다. 그리고, strapi가 작동될 때, nextjs를 작동시키면 되고 reviews.js에 있는 코드를 아래와 같이 수정했다.
+
+```js
+export async function getReviews(){
+    const url = 'http://localhost:1337/api/reviews?'
+    + qs.stringify({
+        fields: ['slug', 'title', 'subtitle', 'publishedAt'],
+        populate: { image: { fields: ['url'] } },
+        sort: ['publishedAt:desc'],
+        pagination: { pageSize: 6 },
+        }, { encodeValuesOnly: true });
+    console.log(['getReviews:', url]);
+    const response = await fetch(url);
+    const { data } = await response.json();
+    return data.map(({ attributes }) => ({
+        slug: attributes.slug,
+        title: attributes.title,
+    }));
+}
+```
