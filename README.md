@@ -309,3 +309,8 @@ export async function getReviews(){
     }));
 }
 ```
+
+## 11/22/2023
+
+오늘은 코드 리팩토링을 배웠다.
+서버에서 
