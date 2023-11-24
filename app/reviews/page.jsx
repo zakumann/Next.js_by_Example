@@ -3,13 +3,16 @@ import Heading from '@/components/Heading';
 import { getReviews } from '@/lib/reviews';
 import Image from 'next/image';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
     title: 'Review',
 };
 
 export default async function ReviewsPage(){
     const reviews = await getReviews(6);
-    // console.log('[ReviewPage] reviews:', reviews);
+    console.log('[ReviewPage] rendering:',
+        reviews.map((review) => review.slug).join(', '));
     return(
         <>
             <Heading>Reviews</Heading>
