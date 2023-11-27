@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function NavLink(href, children, prefetch){
+export default function NavLink({ children, href, prefetch }){
     const pathname = usePathname();
     if (href === pathname){
         return(
