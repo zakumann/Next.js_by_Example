@@ -3,32 +3,38 @@
 import { Combobox } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useDebounce } from 'use-debounce';
 import { useIsClient } from '@/lib/hooks';
 
-const reviews =  [
-    { slug: 'hades-2018', title: 'Hades' },
-    { slug: 'fall-guys', title: 'Fall Guys: Ultimate Knockout' },
-    { slug: 'black-mesa', title: 'Black Mesa' },
-    { slug: 'disco-elysium', title: 'Disco Elysium' },
-    { slug: 'dead-cells', title: 'Dead Cells' },
-];
-
-export default function SearchBox({ reviews }){
+export default function SearchBox(){
     const router = useRouter();
     const isClient = useIsClient();
     const [query, setQuery] = useState('');
+    const [debouncedQuery] = useDebounce(query, 300);
+    const [reviews, setReviews] = useState([]);
+    useEffect(() => {
+        if (debouncedQuery.length > 1){
+            const controller = new AbortController();
+            (async () => {
+                const url ='/api/search?query=' + encodeURIComponent(debouncedQuery);
+                const response = await fetch(url, { signal: controller.signal });
+                const reviews = await response.json();
+                setReviews(reviews);
+            })();
+            return () => controller.abourt();
+        } else {
+            setReviews([]);
+        }
+    }, [debouncedQuery]);
 
     const handleChange = (review) => {
         router.push(`/reviews/${review.slug}`);
     };
 
-    console.log('[SearchBox] query:', query);
+    // console.log('[SearchBox]', { query, debouncedQuery });
     if (!isClient){
         return null;
     }
-    const filtered = reviews.filter((review) =>
-        review.title.toLowerCase().includes(query.toLowerCase())
-    ).slice(0, 5);
     return(
     <div className="relative w-48">
         <Combobox onChange={handleChange}>
@@ -36,7 +42,7 @@ export default function SearchBox({ reviews }){
                 value={query} onChange={(event) => setQuery(event.target.value)}
                 className="border px-2 py-1 rounded w-full" />
             <Combobox.Options className="absolute bg-white">
-                {filtered.map((review) => (
+                {reviews.map((review) => (
                     <Combobox.Option key={review.slug} value={review}>
                         {({ active }) => (
                             <span className={`block px-2 truncate w-full ${
