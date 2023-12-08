@@ -21,7 +21,7 @@ export default function SearchBox(){
                 const reviews = await response.json();
                 setReviews(reviews);
             })();
-            return () => controller.abourt();
+            return () => controller.abort();
         } else {
             setReviews([]);
         }
