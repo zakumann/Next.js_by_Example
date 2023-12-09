@@ -1,26 +1,19 @@
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { createComment } from "@/lib/comments";
+'use client';
+
+import { createCommentAction } from "@/app/reviews/[slug]/actions";
+import { useFormState } from "@/lib/hooks";
+
 
 export default function CommentForm({ slug, title }) {
-    async function action(formData){
-        'use server';
-        const message = await createComment({
-            slug,
-            user: formData.get('user'),
-            message: formData.get('message'),
-        });
-        console.log('created:', message);
-        revalidatePath(`/reviews/${slug}`);
-        redirect(`/reviews/${slug}`);
-    }
+    const [state, handleSubmit] = useFormState(createCommentAction);
 
     return (
-    <form action={action}
+    <form onSubmit={handleSubmit}
         className="border bg-white flex flex-col gap-2 mt-3 px-3 py-2 reounded">
         <p className="pb-1">
             Already played <strong>{title}</strong>? Have your say!
         </p>
+        <input type="hidden" name="slug" value={slug} />
         <div className="flex">
             <label htmlFor="userField" className="shrink-0 w-32">
                 Your name
@@ -37,9 +30,13 @@ export default function CommentForm({ slug, title }) {
                 className="border px-2 py-1 rouned w-full"
             />
         </div>
-        <button type="submit"
+        {Boolean(state.error) && (
+            <p className="text-red-700">{state.error.message}</p>
+        )}
+        <button type="submit" disabled={state.loading}
             className="bg-orange-800 rouned px-2 py-1 self-center
-                        text-slate-50 w-32 hover:bg-orange-700">
+                        text-slate-50 w-32 hover:bg-orange-700
+                        disabled:bg-slate-500 disabled:cursor-not-0allowed">
             Submit
         </button>
     </form>
