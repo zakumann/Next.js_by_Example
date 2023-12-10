@@ -18,7 +18,7 @@ export default function RootLayout({ children }){
                     <NavBar />
                 </header>
                 <main className="grow py-3">
-                    {children}
+                        {children}
                 </main>
                 <footer className="border-t py-3 text-center text-xs">
                     Game data and images courtesy of{' '}

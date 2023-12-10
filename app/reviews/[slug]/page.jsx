@@ -1,8 +1,10 @@
-import Image from 'next/image';
 import { ChatBubbleBottomCenterTextIcon } from '@heroicons/react/20/solid';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 import CommentForm from '@/components/CommentForm';
 import CommentList from '@/components/CommentList';
+import CommentListSkeleton from '@/components/CommentListSkeleton';
 import Heading from "@/components/Heading";
 import ShareLinkButton from '@/components/ShareLinkButton';
 import { getReview, getSlugs } from '@/lib/reviews';
@@ -25,6 +27,8 @@ export async function generateMetadata({ params: { slug } }){
 
 export default async function ReviewPage({ params: { slug } }){
     console.log('[ReviewPage] review', slug);
+    // simulate delay:
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     const review = await getReview(slug);
     if (!review){
         notFound();
@@ -51,7 +55,9 @@ export default async function ReviewPage({ params: { slug } }){
                     Comments
                 </h2>
                 <CommentForm slug={slug} title={review.title} />
-                <CommentList slug={slug} />
+                <Suspense fallback={<CommentListSkeleton />}>
+                    <CommentList slug={slug} />
+                </Suspense>
             </section>
         </>
     );
